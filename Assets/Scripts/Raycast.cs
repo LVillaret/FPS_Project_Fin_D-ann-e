@@ -20,13 +20,13 @@ public class Raycast : MonoBehaviour
             Ray ray = new Ray(_originTransform.position, _originTransform.forward);
 
             if (Physics.Raycast(ray, out RaycastHit hit)){
-                TargetController target = hit.transform.GetComponent<TargetController>();
-                if (target != null) target.TakeDamage(1);
+                EnemyController enemy = hit.transform.GetComponent<EnemyController>();
+                if (enemy != null) enemy.TakeDamage(1);
             }
             GameObject a = Instantiate(_fire, _originTransform.position, Quaternion.identity);
             GameObject b = Instantiate(_hitPoint, hit.point, Quaternion.identity);
 
-            Destroy(a, 0.5f);
+            Destroy(a, 0.2f);
             Destroy(b, 2f);
         }
     }

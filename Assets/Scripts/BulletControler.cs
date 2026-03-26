@@ -13,10 +13,10 @@ public class BulletControler : MonoBehaviour
 
    private void OnTriggerEnter(Collider other)
    {
-      TargetController target = other.GetComponent<TargetController>();
-      if (target != null)
+      EnemyController enemy = other.GetComponent<EnemyController>();
+      if (enemy != null)
       {
-         target.TakeDamage(1);
+         enemy.TakeDamage(1);
          Destroy(gameObject);
       }
    }
