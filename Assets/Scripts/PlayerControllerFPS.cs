@@ -19,13 +19,11 @@ public class PlayerControllerFPS : MonoBehaviour
     private float _yLook;
     private float _xLook;
         
-    private void Awake()
-    { 
+    private void Awake(){
         _animator = GetComponent<Animator>();
     }
     
-    private void Update()
-    { 
+    private void Update(){ 
         
         // Input
         //Mouse
@@ -55,8 +53,8 @@ public class PlayerControllerFPS : MonoBehaviour
         
     }
 
-    private float ClampAngle(float angle, float from, float to)
-    {
+    private float ClampAngle(float angle, float from, float to){
+    
         if (angle < 0f) angle = 360 + angle;
         if (angle > 180f) return Mathf.Max(angle, 360+from);
         return Mathf.Min(angle, to);
