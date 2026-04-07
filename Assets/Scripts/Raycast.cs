@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class Raycast : MonoBehaviour
 {
-    [SerializeField] private Transform _originTransform;
     [SerializeField] private float _maxAmmo = 30f;
     [SerializeField] private float _currentAmmo = 30f;
-    
+    [SerializeField] private Transform _originTransform;
+    private float _reloadTime = 2f;
+    private float _reloadTimer;
+    private bool _reloading;
+
     public GameObject _fire;
     public GameObject _hitPoint;
 
@@ -17,27 +20,48 @@ public class Raycast : MonoBehaviour
         Shooting();
     }
 
-    // ReSharper disable Unity.PerformanceAnalysis
     public void Shooting()
     {
-        if (Input.GetKey(KeyCode.R))
+        // reload with R
+        if (Input.GetKey(KeyCode.R) && !_reloading)
         {
-            _currentAmmo = _maxAmmo;
+            _reloading = true;
         }
-        
-        if (_currentAmmo == 0) return;
-        
+
+        if (_reloading)
+        {
+            _reloadTimer += Time.deltaTime;
+            if (_reloadTimer >= _reloadTime)
+            {
+                _reloading = false;
+                _reloadTimer = 0f;
+                _currentAmmo = _maxAmmo;
+            }
+        }
+
+        // stop shoot if ammo = 0
+        else if (_currentAmmo == 0) return;
+
+        // create raycast
         Debug.DrawRay(_originTransform.position, _originTransform.forward * 100, Color.yellow);
-        if (Input.GetButtonDown("Fire1")) {
+        if (Input.GetButtonDown("Fire1"))
+        {
             Ray ray = new Ray(_originTransform.position, _originTransform.forward);
 
-            if (Physics.Raycast(ray, out RaycastHit hit)){
+            //Damage if enemy are hit
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                
                 EnemyController enemy = hit.transform.GetComponent<EnemyController>();
                 if (enemy != null) enemy.TakeDamage(1);
             }
-            GameObject a = Instantiate(_fire, _originTransform.position, Quaternion.identity);
-            GameObject b = Instantiate(_hitPoint, hit.point, Quaternion.identity);
 
+            // particles effects 
+            GameObject a = Instantiate(_fire, _originTransform.position, _originTransform.rotation, _originTransform);
+            GameObject b = Instantiate(_hitPoint, hit.point, Quaternion.identity);
+            //hit.normal
+            
+            // destroy particles effects after time
             Destroy(a, 0.2f);
             Destroy(b, 2f);
         }
@@ -46,13 +70,7 @@ public class Raycast : MonoBehaviour
         {
             _currentAmmo--;
         }
-       
-       
-        
     }
-
-    
-
 }
 
 
