@@ -107,4 +107,6 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(_attackRange);
         _canAttack = true;
     }
+    
+    
 }
