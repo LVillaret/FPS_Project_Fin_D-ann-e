@@ -51,7 +51,6 @@ public class Raycast : MonoBehaviour
             //Damage if enemy are hit
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                
                 EnemyController enemy = hit.transform.GetComponent<EnemyController>();
                 if (enemy != null) enemy.TakeDamage(1);
             }

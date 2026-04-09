@@ -1,17 +1,23 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private float _currenteHealth;
     [SerializeField] private Transform _player;
-    [SerializeField] private float _followStartRadius = 3f;
-    [SerializeField] private float _followEndRadius = 5f;
     [SerializeField] private float _rotationSpeed = 3f;
+    [SerializeField] private float _currenteHealth = 8f;
+    [SerializeField] private float _maxHealth = 8f;
+    
+    [Header("Attack Parameters")]
+    [SerializeField] private float _attackCD = 3f;
+    [SerializeField] private float _attackRange = 1f;
     [SerializeField] private float _damage = 20f;
+    
     private float _despawnTime;
+    private float _timePassed;
     
     private bool _isFollowing = false;
     private bool _dead;
@@ -22,13 +28,16 @@ public class EnemyController : MonoBehaviour
     
     private Animator _animator;
     private NavMeshAgent _agent;
-    
 
+    public bool _canAttack = true;
+    
+    
     private void Start()
     {
         _originalPosition = transform.position;
         _animator = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
+        _player = GameObject.FindGameObjectWithTag("Players").transform;
     }
 
     private void Update()
@@ -39,6 +48,7 @@ public class EnemyController : MonoBehaviour
         _animator.SetFloat("Horizontal", z);
         _animator.SetFloat("Vertical", x);
 
+        // despawn enemy when is dead
         if (_dead)
         {
             _despawnTime += Time.deltaTime;
@@ -47,6 +57,23 @@ public class EnemyController : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        
+        
+        if (_timePassed >= _attackCD)
+        {
+            if (Vector3.Distance(_player.position, transform.position) <= _attackRange)
+            {
+                _animator.SetTrigger("Attack");
+                _timePassed = 0;
+            }
+        }
+        _timePassed += Time.deltaTime;
+
+        if (_canAttack)
+        {
+            AttackPlayer();
+        }
+        
         
     }
 
@@ -58,8 +85,8 @@ public class EnemyController : MonoBehaviour
             _animator.SetTrigger("Die");
             GetComponent<NavMeshAgent>().enabled = false;
             GetComponent<CapsuleCollider>().enabled = false;
-
             _dead = true;
+            
         }
         else 
         {
@@ -67,8 +94,17 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void GiveDamage(int damage)
+    private void AttackPlayer()
     {
-        
+        StartCoroutine(AttackTime());
+    }
+
+    IEnumerator AttackTime()
+    {
+        _canAttack = false;
+        yield return new WaitForSeconds(0.5f);
+        PlayerControllerFPS.singleton.PlayerDamage(_damage);
+        yield return new WaitForSeconds(_attackRange);
+        _canAttack = true;
     }
 }

@@ -6,10 +6,11 @@ public class PlayerControllerFPS : MonoBehaviour
     [Header("References")] [SerializeField]
     private Transform _cameraTransform;
 
-    [Header("Settings")] [SerializeField] private float _speed = 3;
+    [Header("Settings")] 
+    [SerializeField] private float _speed = 5;
     [SerializeField] private float _xMaxAngle = 30;
     [SerializeField] private float _xMinAngle = -45;
-    [SerializeField] private float _rotationSpeed = 2000;
+    [SerializeField] private float _rotationSpeed = 1400;
     [SerializeField] private float _maxHealth = 100;
     [SerializeField] private float _currentHealth = 100;
 
@@ -27,10 +28,18 @@ public class PlayerControllerFPS : MonoBehaviour
 
     private float _horizontal;
     private float _vertical;
+    
+    public static PlayerControllerFPS singleton;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
+        singleton = this;
+    }
+
+    private void Start()
+    {
+        _currentHealth  = _maxHealth;
     }
 
     private void Update()
@@ -47,20 +56,25 @@ public class PlayerControllerFPS : MonoBehaviour
         // Animation
         _animator.SetFloat("Vertical", _vertical);
         _animator.SetFloat("Horizontal", _horizontal);
+        
+        
+        _bodyRotation = new Vector3(0, _mouseX, 0) * (_rotationSpeed * Time.fixedDeltaTime);
+        transform.Rotate(_bodyRotation);
+        
+        //  Camera Rotation
+        _cameraPitch -= _mouseY * _rotationSpeed * Time.fixedDeltaTime;
+        _cameraPitch = Mathf.Clamp(_cameraPitch, _xMinAngle, _xMaxAngle);
+        
+        //_cameraTransform.Rotate(_cameraTransform.localEulerAngles - new Vector3(0, _cameraPitch, 0f));
+        _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
+        
     }
 
     private void FixedUpdate()
     {
         // Movement
-        transform.Translate(_horizontal * Time.deltaTime * _speed, 0, _vertical * Time.deltaTime * _speed);
-
-        _bodyRotation = new Vector3(0, _mouseX, 0) * (_rotationSpeed * Time.deltaTime);
-        transform.Rotate(_bodyRotation);
-
-        //  Camera Rotation
-        _cameraPitch -= _mouseY * _rotationSpeed * Time.deltaTime;
-        _cameraPitch = Mathf.Clamp(_cameraPitch, _xMinAngle, _xMaxAngle);
-        _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
+        transform.Translate(_horizontal * Time.fixedDeltaTime * _speed, 0, _vertical * Time.fixedDeltaTime * _speed);
+        
     }
 
     private float ClampAngle(float angle, float from, float to)
@@ -69,5 +83,9 @@ public class PlayerControllerFPS : MonoBehaviour
         if (angle > 180f) return Mathf.Max(angle, 360 + from);
         return Mathf.Min(angle, to);
     }
-   
+
+    public void PlayerDamage(float _damage)
+    {
+        _currentHealth -= _damage;
+    }
 }
