@@ -12,7 +12,7 @@ public class PlayerControllerFPS : MonoBehaviour
     [SerializeField] private float _xMinAngle = -45;
     [SerializeField] private float _rotationSpeed = 1400;
     [SerializeField] private float _maxHealth = 100;
-    [SerializeField] private float _currentHealth = 100;
+     public float _currentHealth = 100;
 
     private Animator _animator;
     private Vector3 _move;
@@ -28,13 +28,10 @@ public class PlayerControllerFPS : MonoBehaviour
 
     private float _horizontal;
     private float _vertical;
-    
-    public static PlayerControllerFPS singleton;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        singleton = this;
     }
 
     private void Start()
@@ -67,7 +64,6 @@ public class PlayerControllerFPS : MonoBehaviour
         
         //_cameraTransform.Rotate(_cameraTransform.localEulerAngles - new Vector3(0, _cameraPitch, 0f));
         _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
-        
     }
 
     private void FixedUpdate()
@@ -83,9 +79,5 @@ public class PlayerControllerFPS : MonoBehaviour
         if (angle > 180f) return Mathf.Max(angle, 360 + from);
         return Mathf.Min(angle, to);
     }
-
-    public void PlayerDamage(float _damage)
-    {
-        _currentHealth -= _damage;
-    }
+    
 }

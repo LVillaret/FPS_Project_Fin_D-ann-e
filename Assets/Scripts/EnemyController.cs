@@ -6,15 +6,17 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private Transform _player;
+    [SerializeField] private PlayerControllerFPS _player;
     [SerializeField] private float _rotationSpeed = 3f;
-    [SerializeField] private float _currenteHealth = 8f;
-    [SerializeField] private float _maxHealth = 8f;
+    [SerializeField] private float _enemyCurrentHealth = 8f;
+    [SerializeField] private float _enemyMaxHealth = 8f;
     
     [Header("Attack Parameters")]
     [SerializeField] private float _attackCD = 3f;
     [SerializeField] private float _attackRange = 1f;
     [SerializeField] private float _damage = 20f;
+    
+    [SerializeField] private float _stopMoveAfterHit;
     
     private float _despawnTime;
     private float _timePassed;
@@ -22,14 +24,14 @@ public class EnemyController : MonoBehaviour
     private bool _isFollowing = false;
     private bool _dead;
     private bool _hit;
+    private bool _attack;
     
     private Vector3 _originalPosition;
     private Vector3 _direction;
+    private float _lastHitTime;
     
     private Animator _animator;
     private NavMeshAgent _agent;
-
-    public bool _canAttack = true;
     
     
     private void Start()
@@ -37,12 +39,12 @@ public class EnemyController : MonoBehaviour
         _originalPosition = transform.position;
         _animator = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
-        _player = GameObject.FindGameObjectWithTag("Players").transform;
+        _lastHitTime = _stopMoveAfterHit;
     }
 
     private void Update()
     {
-        _agent.SetDestination(_player.position);
+        _agent.SetDestination(_player.transform.position);
         float z = _agent.velocity.z;
         float x = -_agent.velocity.x;
         _animator.SetFloat("Horizontal", z);
@@ -51,62 +53,67 @@ public class EnemyController : MonoBehaviour
         // despawn enemy when is dead
         if (_dead)
         {
-            _despawnTime += Time.deltaTime;
-            if (_despawnTime >= 3f)
-            {
-                Destroy(gameObject);
-            }
+            DespawnEnemy();
+        }
+
+        // Stop agent when taking damage
+        if (_lastHitTime < _stopMoveAfterHit)
+        {
+            _lastHitTime += Time.deltaTime;
+            _agent.isStopped = true;
+        }
+        else
+        {
+            _agent.isStopped = false;
         }
         
-        
+        // Enemy attack
         if (_timePassed >= _attackCD)
         {
-            if (Vector3.Distance(_player.position, transform.position) <= _attackRange)
-            {
-                _animator.SetTrigger("Attack");
-                _timePassed = 0;
-            }
+            Attack();
         }
         _timePassed += Time.deltaTime;
+        
+    }
 
-        if (_canAttack)
+    void DespawnEnemy()
+    {
+        _despawnTime += Time.deltaTime;
+        if (_despawnTime >= 3f)
         {
-            AttackPlayer();
+            Destroy(gameObject);
         }
-        
-        
+    }
+
+    void Attack()
+    {
+        if (Vector3.Distance(_player.transform.position, transform.position) <= _attackRange)
+        {
+            _animator.SetTrigger("Attack");
+            _timePassed = 0;
+            _attack =  true;
+
+            _player._currentHealth = _player._currentHealth - _damage;
+            Debug.Log(_player._currentHealth);
+                
+        }
     }
 
     public void TakeDamage(int damage)
     {
-        _currenteHealth -= damage;
-        if (_currenteHealth <= 0)
+        _enemyCurrentHealth -= damage;
+        if (_enemyCurrentHealth <= 0)
         {
             _animator.SetTrigger("Die");
-            GetComponent<NavMeshAgent>().enabled = false;
+            _agent.isStopped = true;
             GetComponent<CapsuleCollider>().enabled = false;
             _dead = true;
             
         }
-        else 
+        else if(!_dead)
         {
             _animator.SetTrigger("Hit");
+            _lastHitTime = 0f;
         }
     }
-
-    private void AttackPlayer()
-    {
-        StartCoroutine(AttackTime());
-    }
-
-    IEnumerator AttackTime()
-    {
-        _canAttack = false;
-        yield return new WaitForSeconds(0.5f);
-        PlayerControllerFPS.singleton.PlayerDamage(_damage);
-        yield return new WaitForSeconds(_attackRange);
-        _canAttack = true;
-    }
-    
-    
 }

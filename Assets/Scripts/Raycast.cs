@@ -2,6 +2,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Raycast : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Raycast : MonoBehaviour
 
     public GameObject _fire;
     public GameObject _hitPoint;
+    
 
     private void Update()
     {
@@ -22,6 +24,7 @@ public class Raycast : MonoBehaviour
 
     public void Shooting()
     {
+        
         // reload with R
         if (Input.GetKey(KeyCode.R) && !_reloading)
         {
@@ -57,8 +60,7 @@ public class Raycast : MonoBehaviour
 
             // particles effects 
             GameObject a = Instantiate(_fire, _originTransform.position, _originTransform.rotation, _originTransform);
-            GameObject b = Instantiate(_hitPoint, hit.point, Quaternion.identity);
-            //hit.normal
+            GameObject b = Instantiate(_hitPoint, hit.point, Quaternion.LookRotation(hit.normal));
             
             // destroy particles effects after time
             Destroy(a, 0.2f);
@@ -69,7 +71,10 @@ public class Raycast : MonoBehaviour
         {
             _currentAmmo--;
         }
+        
+       
     }
+    
 }
 
 
