@@ -6,11 +6,14 @@ public class MainMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("GlobalScene");
     }
 
     public void QuitGame()
     {
         Application.Quit();
     }
+    
+    
+    
 }
