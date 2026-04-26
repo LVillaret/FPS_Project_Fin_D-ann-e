@@ -15,7 +15,6 @@ public class Raycast : MonoBehaviour
     private bool _autoShoot = false;
     private bool _reloading;
 
-
     public GameObject _fire;
     public GameObject _hitPoint;
 

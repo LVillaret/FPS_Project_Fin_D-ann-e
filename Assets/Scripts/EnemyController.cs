@@ -112,7 +112,7 @@ public class EnemyController : MonoBehaviour
         }
         else if(!_dead)
         {
-            _animator.SetTrigger("Hit");
+            _animator.SetTrigger("Hit" );
             _lastHitTime = 0f;
         }
     }
