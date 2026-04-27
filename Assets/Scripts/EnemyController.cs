@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private PlayerControllerFPS _player;
     [SerializeField] private float _rotationSpeed = 3f;
-    [SerializeField] private float _enemyCurrentHealth = 8f;
+    [SerializeField] public float _enemyCurrentHealth = 8f;
     [SerializeField] private float _enemyMaxHealth = 8f;
     
     [Header("Attack Parameters")]
