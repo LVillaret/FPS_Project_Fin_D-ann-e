@@ -14,11 +14,19 @@ public class Raycast : MonoBehaviour
     private float _reloadTimer;
     private bool _autoShoot = false;
     private bool _reloading;
+    private AudioSource _audioSource;
+    
 
     public GameObject _fire;
     public GameObject _hitPoint;
+    public AudioClip _fireSoundEffect;
+    public AudioClip _reloadSoundEffect;
 
 
+    private void Start()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
     private void Update()
     {
         Shooting();
@@ -31,6 +39,7 @@ public class Raycast : MonoBehaviour
         if (Input.GetKey(KeyCode.R) && !_reloading)
         {
             _reloading = true;
+            _audioSource.PlayOneShot(_reloadSoundEffect);
         }
 
         if (_reloading)
@@ -49,6 +58,7 @@ public class Raycast : MonoBehaviour
         Debug.DrawRay(_cameraTransform.position, _cameraTransform.forward * 100, Color.yellow);
         if (Input.GetButtonDown("Fire1"))
         {
+            _audioSource.PlayOneShot(_fireSoundEffect);
             Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
 
             //Damage if enemy are hit

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private PlayerControllerFPS _player;
+   
     [SerializeField] private float _rotationSpeed = 3f;
     [SerializeField] public float _enemyCurrentHealth = 8f;
     [SerializeField] private float _enemyMaxHealth = 8f;
@@ -33,6 +33,7 @@ public class EnemyController : MonoBehaviour
     private Animator _animator;
     private NavMeshAgent _agent;
     
+    public PlayerControllerFPS _player;
     
     private void Start()
     {
@@ -93,8 +94,11 @@ public class EnemyController : MonoBehaviour
             _timePassed = 0;
             _attack =  true;
 
-            _player._currentHealth = _player._currentHealth - _damage;
+            _player._currentHealth = _player._currentHealth -= _damage;
             Debug.Log(_player._currentHealth);
+            if(_player._currentHealth <= 0)
+                Debug.Log("Mission Failed");
+            
                 
         }
     }

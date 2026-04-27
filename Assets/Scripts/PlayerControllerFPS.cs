@@ -112,5 +112,7 @@ public class PlayerControllerFPS : MonoBehaviour
         //HealthUI
         _durationTimer = 0f;
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1);
+        
     }
+    
 }

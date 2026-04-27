@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SFXManager : StateMachineBehaviour
 {
+    [SerializeField] private float _timer;
     private AudioSource _audioSource;
-    private float _timer;
     private bool _isPlaying;
     
     public AudioClip _soundEffect;
@@ -36,7 +36,7 @@ public class SFXManager : StateMachineBehaviour
 
     private void PlaySound()
     {
-        if(_audioSource &&  _soundEffect)
-            _audioSource.PlayOneShot(_soundEffect);
+            if(_audioSource &&  _soundEffect )
+                _audioSource.PlayOneShot(_soundEffect);
     }
 }
