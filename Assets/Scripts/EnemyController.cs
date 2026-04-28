@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 3f;
     [SerializeField] public float _enemyCurrentHealth = 8f;
     [SerializeField] private float _enemyMaxHealth = 8f;
+    [SerializeField] private float _enemiesNumber = 10f;
     
     [Header("Attack Parameters")]
     [SerializeField] private float _attackCD = 3f;
@@ -34,6 +36,8 @@ public class EnemyController : MonoBehaviour
     private NavMeshAgent _agent;
     
     public PlayerControllerFPS _player;
+
+    public Text _enemiesNumberText;
     
     private void Start()
     {
@@ -45,6 +49,8 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
+        _enemiesNumberText.text = _enemiesNumber.ToString();
+            
         _agent.SetDestination(_player.transform.position);
         float z = _agent.velocity.z;
         float x = -_agent.velocity.x;
@@ -112,7 +118,7 @@ public class EnemyController : MonoBehaviour
             _agent.isStopped = true;
             GetComponent<CapsuleCollider>().enabled = false;
             _dead = true;
-            
+            _enemiesNumber -= 1f;
         }
         else if(!_dead)
         {
