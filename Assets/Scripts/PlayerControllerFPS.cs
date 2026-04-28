@@ -15,11 +15,11 @@ public class PlayerControllerFPS : MonoBehaviour
     
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100;
-     public float _currentHealth = 100;
-     private float _durationTimer;
-     public Image overlay;
-     public float overlayDuration;
-     public float fadeSpeed;
+    public float _currentHealth = 100;
+    private float _durationTimer;
+    public Image overlay;
+    public float overlayDuration;
+    public float fadeSpeed;
 
     private Animator _animator;
     
@@ -36,6 +36,7 @@ public class PlayerControllerFPS : MonoBehaviour
     
     private float _horizontal;
     private float _vertical;
+    
 
     private void Awake()
     {
@@ -51,6 +52,7 @@ public class PlayerControllerFPS : MonoBehaviour
 
     private void Update()
     {
+        
         TakeDamage();
         // Input
         //Mouse
@@ -114,5 +116,4 @@ public class PlayerControllerFPS : MonoBehaviour
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1);
         
     }
-    
 }

@@ -1,5 +1,6 @@
 
 using System;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class Raycast : MonoBehaviour
     public GameObject _hitPoint;
     public AudioClip _fireSoundEffect;
     public AudioClip _reloadSoundEffect;
+    public Text _currentAmmoText;
 
 
     private void Start()
@@ -34,7 +36,7 @@ public class Raycast : MonoBehaviour
 
     public void Shooting()
     {
-
+        _currentAmmoText.text = _currentAmmo.ToString();
         // reload with R
         if (Input.GetKey(KeyCode.R) && !_reloading)
         {
