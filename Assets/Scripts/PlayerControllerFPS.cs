@@ -52,15 +52,29 @@ public class PlayerControllerFPS : MonoBehaviour
         //HealthUI
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0f);
         _audioSource = GetComponent<AudioSource>();
+        
+        
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Z))
+        
+        if (Input.GetKeyDown(KeyCode.D))   
         {
             _audioSource.PlayOneShot(_WalkSoundEffect);
         }
-        
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            _audioSource.PlayOneShot(_WalkSoundEffect);
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            _audioSource.PlayOneShot(_WalkSoundEffect);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            _audioSource.PlayOneShot(_WalkSoundEffect);
+        }
         TakeDamage();
         // Input
         //Mouse
@@ -124,4 +138,5 @@ public class PlayerControllerFPS : MonoBehaviour
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1);
         
     }
+    
 }
