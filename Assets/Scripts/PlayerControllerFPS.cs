@@ -12,6 +12,7 @@ public class PlayerControllerFPS : MonoBehaviour
     [SerializeField] private float _xMaxAngle = 30;
     [SerializeField] private float _xMinAngle = -45;
     [SerializeField] private float _rotationSpeed = 1400;
+    [SerializeField] private  AudioClip _WalkSoundEffect;
     
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100;
@@ -37,6 +38,8 @@ public class PlayerControllerFPS : MonoBehaviour
     private float _horizontal;
     private float _vertical;
     
+    private AudioSource _audioSource;
+    
 
     private void Awake()
     {
@@ -48,10 +51,15 @@ public class PlayerControllerFPS : MonoBehaviour
         _currentHealth  = _maxHealth;
         //HealthUI
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0f);
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Z))
+        {
+            _audioSource.PlayOneShot(_WalkSoundEffect);
+        }
         
         TakeDamage();
         // Input
