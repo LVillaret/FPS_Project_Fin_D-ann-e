@@ -7,37 +7,41 @@ using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
-   
+   [Header("Parameters")]
+    [SerializeField] private float _detectionDistance = 10f;
     [SerializeField] private float _rotationSpeed = 3f;
-    [SerializeField] public float _enemyCurrentHealth = 8f;
-    [SerializeField] private float _enemyMaxHealth = 8f;
     [SerializeField] private float _enemiesNumber = 10f;
+    public Text _enemiesNumberText;
     
     [Header("Attack Parameters")]
     [SerializeField] private float _attackCD = 3f;
     [SerializeField] private float _attackRange = 1f;
     [SerializeField] private float _damage = 20f;
     
+    [Header("Life Parameters")]
+    [SerializeField] public float _enemyCurrentHealth = 8f;
+    [SerializeField] private float _enemyMaxHealth = 8f;
     [SerializeField] private float _stopMoveAfterHit;
     
     private float _despawnTime;
     private float _timePassed;
+    private float _lastHitTime;
     
-    private bool _isFollowing = false;
     private bool _dead;
     private bool _hit;
     private bool _attack;
+    private bool _isActivate = false;
     
     private Vector3 _originalPosition;
     private Vector3 _direction;
-    private float _lastHitTime;
     
     private Animator _animator;
+    
     private NavMeshAgent _agent;
     
     public PlayerControllerFPS _player;
 
-    public Text _enemiesNumberText;
+    
     
     private void Start()
     {
@@ -49,14 +53,18 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        _enemiesNumberText.text = _enemiesNumber.ToString();
-            
-        _agent.SetDestination(_player.transform.position);
-        float z = _agent.velocity.z;
-        float x = -_agent.velocity.x;
-        _animator.SetFloat("Horizontal", z);
-        _animator.SetFloat("Vertical", x);
+        float distance = Vector3.Distance(transform.position, _player.transform.position);
 
+        if (distance <= _detectionDistance)
+        {
+            _agent.SetDestination(_player.transform.position);
+            float z = _agent.velocity.z;
+            float x = -_agent.velocity.x;
+            _animator.SetFloat("Horizontal", z);
+            _animator.SetFloat("Vertical", x);
+            
+        }
+        
         // despawn enemy when is dead
         if (_dead)
         {
@@ -81,6 +89,7 @@ public class EnemyController : MonoBehaviour
         }
         _timePassed += Time.deltaTime;
         
+        _enemiesNumberText.text = _enemiesNumber.ToString();
     }
 
     void DespawnEnemy()
@@ -121,7 +130,7 @@ public class EnemyController : MonoBehaviour
             _enemiesNumber -= 1f;
         }
         else if(!_dead)
-        {
+        {   
             _animator.SetTrigger("Hit" );
             _lastHitTime = 0f;
         }

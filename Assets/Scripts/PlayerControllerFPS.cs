@@ -121,7 +121,6 @@ public class PlayerControllerFPS : MonoBehaviour
     {
         // Movement
         transform.Translate(_horizontal * Time.fixedDeltaTime * _speed, 0, _vertical * Time.fixedDeltaTime * _speed);
-        
     }
 
     private float ClampAngle(float angle, float from, float to)
