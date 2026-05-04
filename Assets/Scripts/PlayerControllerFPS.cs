@@ -19,6 +19,7 @@ public class PlayerControllerFPS : MonoBehaviour
     public float _currentHealth = 100;
     public Image _healthOverlay;
     private float _overlayDuration;
+    private float _timer = 3f;
     
     private Animator _animator;
     
@@ -46,14 +47,12 @@ public class PlayerControllerFPS : MonoBehaviour
     private void Start()
     {
         _currentHealth  = _maxHealth;
-        
         _audioSource = GetComponent<AudioSource>();
-        
-        
     }
 
     private void Update()
     {
+        TakeDamage();
         
         if (Input.GetKeyDown(KeyCode.D))   
         {
@@ -95,7 +94,7 @@ public class PlayerControllerFPS : MonoBehaviour
         //_cameraTransform.Rotate(_cameraTransform.localEulerAngles - new Vector3(0, _cameraPitch, 0f));
         _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
 
-        TakeDamage();
+       
     }
 
     private void FixedUpdate()
@@ -116,6 +115,12 @@ public class PlayerControllerFPS : MonoBehaviour
         if (_currentHealth < 100)
         {
             _healthOverlay.enabled = true;
+            _overlayDuration += Time.deltaTime;
+
+            if (_overlayDuration >= _timer)
+            {
+                _healthOverlay.enabled = false;
+            }
             
         }
     }
