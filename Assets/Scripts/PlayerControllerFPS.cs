@@ -17,11 +17,9 @@ public class PlayerControllerFPS : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100;
     public float _currentHealth = 100;
-    private float _durationTimer;
-    public Image overlay;
-    public float overlayDuration;
-    public float fadeSpeed;
-
+    public Image _healthOverlay;
+    private float _overlayDuration;
+    
     private Animator _animator;
     
     private Vector3 _move;
@@ -34,7 +32,6 @@ public class PlayerControllerFPS : MonoBehaviour
     private float _mouseX;
     private float _mouseY;
     private float _cameraPitch;
-    
     private float _horizontal;
     private float _vertical;
     
@@ -49,8 +46,7 @@ public class PlayerControllerFPS : MonoBehaviour
     private void Start()
     {
         _currentHealth  = _maxHealth;
-        //HealthUI
-        overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0f);
+        
         _audioSource = GetComponent<AudioSource>();
         
         
@@ -75,7 +71,6 @@ public class PlayerControllerFPS : MonoBehaviour
         {
             _audioSource.PlayOneShot(_WalkSoundEffect);
         }
-        TakeDamage();
         // Input
         //Mouse
         _mouseX = Input.GetAxis("Mouse X");
@@ -99,22 +94,8 @@ public class PlayerControllerFPS : MonoBehaviour
         
         //_cameraTransform.Rotate(_cameraTransform.localEulerAngles - new Vector3(0, _cameraPitch, 0f));
         _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
-        
-        // healthUI
-        if (_currentHealth < 100)
-        {
-            if (overlay.color.a >= 0f)
-            {
-                _durationTimer += Time.deltaTime;
-                if (_durationTimer >= overlayDuration)
-                {
-                    float tempAlpha = overlay.color.a;
-                    tempAlpha -= Time.deltaTime * fadeSpeed;
-                    overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, tempAlpha);
-                }
-            }
-        }
-       
+
+        TakeDamage();
     }
 
     private void FixedUpdate()
@@ -132,10 +113,10 @@ public class PlayerControllerFPS : MonoBehaviour
 
     private void TakeDamage()
     {
-        //HealthUI
-        _durationTimer = 0f;
-        overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1);
-        
+        if (_currentHealth < 100)
+        {
+            _healthOverlay.enabled = true;
+            
+        }
     }
-    
 }

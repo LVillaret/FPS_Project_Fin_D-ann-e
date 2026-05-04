@@ -3,14 +3,30 @@ using UnityEngine.InputSystem;
 
 public class LauncherControler : MonoBehaviour
 {
-    [SerializeField] private float ammoPower = 1250f;
-    [SerializeField] private GameObject _ammoPrefab;
+    [Header("Stats")] 
+    [SerializeField] private float _ammoPower = 200f;
+    [SerializeField] private float _startShotsCooldown;
+    [SerializeField] private float _shotCooldown;
+    
+    [Header("References")]
+    [SerializeField] private Transform _player;
+    [SerializeField] private GameObject _ammoPrefab; 
     [SerializeField] private Transform _spawnPoint;
- 
-    private void OnFire(InputValue value)
+    
+    private void Start()
     {
-        GameObject instantiate = Instantiate(_ammoPrefab, _spawnPoint.position, Quaternion.identity);
-        Rigidbody rb = instantiate.GetComponent<Rigidbody>();
-        rb.AddForce(_spawnPoint.forward * ammoPower);
+        _player = GameObject.FindGameObjectWithTag("Players").transform;
+    }
+
+    private void Update()
+    {
+        if (_shotCooldown <= 0)
+        {
+            _shotCooldown = _startShotsCooldown;
+        }
+        else
+        {
+            _shotCooldown -= Time.deltaTime;
+        }
     }
 }
