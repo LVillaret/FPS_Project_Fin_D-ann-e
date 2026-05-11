@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,22 +13,27 @@ public class PlayerControllerFPS : MonoBehaviour
     [SerializeField] private float _speed = 5;
     [SerializeField] private float _xMaxAngle = 30;
     [SerializeField] private float _xMinAngle = -45;
-    [SerializeField] private float _rotationSpeed = 1400;
+    [SerializeField] public float _rotationSpeed = 1400;
     [SerializeField] private  AudioClip _WalkSoundEffect;
     
     [Header("Health")]
     [SerializeField] private float _maxHealth = 100;
     public float _currentHealth = 100;
     public Image _healthOverlay;
-    private float _overlayDuration;
-    private float _timer = 3f;
+    [SerializeField] private AnimationCurve _healthCurve;
+    [SerializeField] private float _flashTime;
+    
+    [Header("Death")]
+    public GameObject _deathPanel;
+    
+    [SerializeField] private Raycast _rc;
+    [SerializeField] private PlayerControllerFPS _player;
     
     private Animator _animator;
     
     private Vector3 _move;
     private Vector3 _bodyRotation;
     
-
     private float _yLook;
     private float _xLook;
 
@@ -36,9 +43,14 @@ public class PlayerControllerFPS : MonoBehaviour
     private float _horizontal;
     private float _vertical;
     
-    private AudioSource _audioSource;
+    private bool _isPaused;
     
+    private AudioSource _audioSource;
 
+    private Coroutine _overlayCoroutine;
+    
+    public DeathPanelManager _deathPanelManager;
+    
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -47,13 +59,12 @@ public class PlayerControllerFPS : MonoBehaviour
     private void Start()
     {
         _currentHealth  = _maxHealth;
+        _deathPanel.SetActive(false);
         _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
     {
-        TakeDamage();
-        
         if (Input.GetKeyDown(KeyCode.D))   
         {
             _audioSource.PlayOneShot(_WalkSoundEffect);
@@ -71,36 +82,39 @@ public class PlayerControllerFPS : MonoBehaviour
             _audioSource.PlayOneShot(_WalkSoundEffect);
         }
         // Input
-        //Mouse
-        _mouseX = Input.GetAxis("Mouse X");
-        _mouseY = Input.GetAxis("Mouse Y");
+        
 
         //Keyboard
         _vertical = Input.GetAxis("Vertical");
         _horizontal = Input.GetAxis("Horizontal");
 
-        // Animation
-        _animator.SetFloat("Vertical", _vertical);
-        _animator.SetFloat("Horizontal", _horizontal);
         
+        //Mouse
+        _mouseX = Input.GetAxis("Mouse X");
+        _mouseY = Input.GetAxis("Mouse Y");
+        //  Camera Rotation
         
         _bodyRotation = new Vector3(0, _mouseX, 0) * (_rotationSpeed * Time.fixedDeltaTime);
         transform.Rotate(_bodyRotation);
         
-        //  Camera Rotation
+        //Camera Pitch
         _cameraPitch -= _mouseY * _rotationSpeed * Time.fixedDeltaTime;
         _cameraPitch = Mathf.Clamp(_cameraPitch, _xMinAngle, _xMaxAngle);
         
         //_cameraTransform.Rotate(_cameraTransform.localEulerAngles - new Vector3(0, _cameraPitch, 0f));
         _cameraTransform.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
 
-       
+        // Animation
+        _animator.SetFloat("Vertical", _vertical);
+        _animator.SetFloat("Horizontal", _horizontal);
     }
 
     private void FixedUpdate()
     {
         // Movement
-        transform.Translate(_horizontal * Time.fixedDeltaTime * _speed, 0, _vertical * Time.fixedDeltaTime * _speed);
+        Vector3 move = new Vector3(_horizontal, 0f, _vertical);
+        move = move.normalized;
+        transform.Translate(move*_speed*Time.fixedDeltaTime);
     }
 
     private float ClampAngle(float angle, float from, float to)
@@ -110,18 +124,30 @@ public class PlayerControllerFPS : MonoBehaviour
         return Mathf.Min(angle, to);
     }
 
-    private void TakeDamage()
+    public void TakeDamage()
     {
-        if (_currentHealth < 100)
+        if (_overlayCoroutine != null)
         {
-            _healthOverlay.enabled = true;
-            _overlayDuration += Time.deltaTime;
-
-            if (_overlayDuration >= _timer)
-            {
-                _healthOverlay.enabled = false;
-            }
-            
+            StopCoroutine(_overlayCoroutine);
         }
+
+        _overlayCoroutine = StartCoroutine(DamageOverlayCoroutine());
+    }
+
+    private IEnumerator DamageOverlayCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        float time = 0;
+        while (time < _flashTime)
+        {
+            _healthOverlay.color = new Color(_healthOverlay.color.r, _healthOverlay.color.g, _healthOverlay.color.b, _healthCurve.Evaluate(time / _flashTime * 2));
+            time += Time.fixedDeltaTime;
+            yield return new WaitForNextFrameUnit();
+        }
+    }
+
+    public void Die()
+    {
+        _deathPanelManager.ShowDeathPanel();
     }
 }

@@ -88,7 +88,7 @@ public class EnemyController : MonoBehaviour
         _timePassed += Time.deltaTime;
     }
 
-    void Attack()
+   public  void Attack()
     {
         if (Vector3.Distance(_player.transform.position, transform.position) <= _attackRange)
         {
@@ -97,11 +97,12 @@ public class EnemyController : MonoBehaviour
             _attack =  true;
 
             _player._currentHealth = _player._currentHealth -= _damage;
+            _player.GetComponent<PlayerControllerFPS>().TakeDamage();
             Debug.Log(_player._currentHealth);
-            if(_player._currentHealth <= 0)
-                Debug.Log("Mission Failed");
-            
-                
+            if (_player._currentHealth <= 0)
+            {
+               _player.GetComponent<PlayerControllerFPS>().Die();
+            }
         }
     }
 
