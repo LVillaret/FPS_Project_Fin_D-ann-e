@@ -11,6 +11,17 @@ public class Reticle : MonoBehaviour
     public float _speed;
     public Rigidbody rb;
 
+    public Image _left;
+    public Image _right;
+    public Image _bottom;
+    public Image _top;
+    
+    
+    public Color _normalColor =  Color.white;
+    public Color _ennemyColor =  Color.red;
+
+    public bool _isTargetEnemy;
+    
     private void Start()
     {
         _reticle = GetComponent<RectTransform>();
@@ -18,6 +29,21 @@ public class Reticle : MonoBehaviour
 
     private void Update()
     {
+        if (_isTargetEnemy)
+        {
+            _left.color = _ennemyColor;
+            _right.color = _ennemyColor;
+            _bottom.color = _ennemyColor;
+            _top.color = _ennemyColor;
+        }
+        else
+        {
+            _left.color = _normalColor;
+            _right.color = _normalColor;
+            _bottom.color = _normalColor;
+            _top.color = _normalColor;
+        }
+        
         if (rb.linearVelocity.sqrMagnitude != 0)
         {
             _currentSize = Mathf.Lerp(_currentSize, _maxSize, Time.deltaTime * _speed);

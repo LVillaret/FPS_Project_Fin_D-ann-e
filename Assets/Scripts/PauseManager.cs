@@ -14,6 +14,7 @@ public class PauseManager : MonoBehaviour
     public GameObject _pausePanel;
     public GameObject _ammoPanel;
     public GameObject _enemiesPanel;
+    public AudioSource _audioSource;
   
     
     public static bool _isPaused = false;
@@ -61,6 +62,7 @@ public class PauseManager : MonoBehaviour
         _reticle.SetActive(false);
         _ammoPanel.SetActive(false);
         _enemiesPanel.SetActive(false);
+        _audioSource.enabled = false;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
         
@@ -75,6 +77,7 @@ public class PauseManager : MonoBehaviour
         _reticle.SetActive(true);
         _ammoPanel.SetActive(true);
         _enemiesPanel.SetActive(true);
+        _audioSource.enabled = true;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = true;
     }

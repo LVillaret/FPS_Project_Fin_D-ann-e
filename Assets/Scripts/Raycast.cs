@@ -23,7 +23,7 @@ public class Raycast : MonoBehaviour
     public AudioClip _fireSoundEffect;
     public AudioClip _reloadSoundEffect;
     public Text _currentAmmoText;
-
+    public Reticle _reticle;
 
     private void Start()
     {
@@ -31,7 +31,25 @@ public class Raycast : MonoBehaviour
     }
     private void Update()
     {
+        DetectEnemy();
         Shooting();
+    }
+
+    private void DetectEnemy()
+    {
+        Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
+
+        //Damage if enemy are hit
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            EnemyController enemy = hit.transform.GetComponent<EnemyController>();
+            
+            _reticle._isTargetEnemy = enemy != null;
+        }
+        else
+        {
+            _reticle._isTargetEnemy =  false;
+        }
     }
 
     public void Shooting()
@@ -71,8 +89,14 @@ public class Raycast : MonoBehaviour
                 {
                     enemy.TakeDamage(1);
                 }
-                    
+                
+                BossControler boss =  hit.transform.GetComponentInParent<BossControler>();
+                if (boss != null)
+                {
+                    boss.TakeDamage(1);
+                }
             }
+            
 
             // particles effects 
             GameObject a = Instantiate(_fire, _originTransform.position, _originTransform.rotation, _originTransform);

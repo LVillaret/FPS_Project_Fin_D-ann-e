@@ -3,33 +3,27 @@ using UnityEngine.AI;
 
 public class AmmoControler : MonoBehaviour
 {
-    [SerializeField] private float _damage = 40f;
-    [SerializeField] private float _speed = 5f;
-    
-    private Vector3 _direction;
-    private Transform _player;
-    private float _timer;
-
+    [SerializeField] private float _damage = 35f;
+    [SerializeField] private float _lifeTime = 5f;
 
     private void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Players").transform;
-        _direction = new Vector3(_player.position.x, _player.position.y, _player.position.z);
-    }
-    private void Update()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, _player.position, _speed * Time.deltaTime);
-        _timer += Time.deltaTime;
-        if (_timer > 3f)
-            Destroy(gameObject);
+        Destroy(gameObject, _lifeTime);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerControllerFPS player = other.GetComponent<PlayerControllerFPS>();
-        if (player != null) 
+        if (other.CompareTag("Players"))
         {
-            player._currentHealth =  player._currentHealth -= _damage;
+            PlayerControllerFPS _player = other.GetComponent<PlayerControllerFPS>();
+
+            if (_player != null)
+            {
+                _player._currentHealth -= _damage;
+                
+                Debug.Log(_player._currentHealth);
+            }
+            
             Destroy(gameObject);
         }
     }

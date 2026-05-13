@@ -132,6 +132,7 @@ public class PlayerControllerFPS : MonoBehaviour
         }
 
         _overlayCoroutine = StartCoroutine(DamageOverlayCoroutine());
+        
     }
 
     private IEnumerator DamageOverlayCoroutine()
