@@ -20,11 +20,12 @@ public class AmmoControler : MonoBehaviour
             if (_player != null)
             {
                 _player._currentHealth -= _damage;
-                
+                _player.GetComponent<PlayerControllerFPS>().TakeDamage();
                 Debug.Log(_player._currentHealth);
             }
             
             Destroy(gameObject);
         }
+        
     }
 }

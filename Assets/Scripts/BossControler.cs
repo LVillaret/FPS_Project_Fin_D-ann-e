@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class BossControler : MonoBehaviour
 {
     [Header("Stats")] 
     [SerializeField] private float _currentHealth;
     [SerializeField] private float _maxHealth = 50f;
+    [SerializeField] private GameObject _bossHealthbar;
+    public Slider _healthBar;
 
     [Header("Shooting")]
     [SerializeField] private GameObject _ammoPrefab;
@@ -21,14 +24,17 @@ public class BossControler : MonoBehaviour
     
     public Transform _player;
     public PlayerControllerFPS _playerControllerFPS;
+    
 
     private void Start()
     {
         _currentHealth = _maxHealth;
+        _bossHealthbar.SetActive(false);
     }
 
     private void Update()
     {
+        
         if (!_isActive)
         {
             CheckEnemiesCount();
@@ -51,6 +57,8 @@ public class BossControler : MonoBehaviour
         if (EnemyController.EnemiesNumber <= 0)
         {
             _isActive = true;
+            
+            _bossHealthbar.SetActive(true);
         }
     }
     private void HandleShooting()
@@ -88,12 +96,16 @@ public class BossControler : MonoBehaviour
 
         if (_currentHealth <= 0)
         {
+            _currentHealth = 0;
             Die();
         }
+        _healthBar.value = _currentHealth;
     }
 
     private void Die()
     {
+        _bossHealthbar.SetActive(false);
+        
         Destroy(gameObject);
     }
 }
