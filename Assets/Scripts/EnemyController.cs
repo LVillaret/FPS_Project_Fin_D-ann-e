@@ -25,6 +25,7 @@ public class EnemyController : MonoBehaviour
     private bool _hit;
     private bool _attack;
     private bool _isActivate = false;
+    private bool _isDead = false;
     
     private Vector3 _originalPosition;
     private Vector3 _direction;
@@ -57,6 +58,8 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
+        if (_isDead) return;
+        
         float distance = Vector3.Distance(transform.position, _player.transform.position);
 
         if (distance <= _detectionDistance)
@@ -108,13 +111,12 @@ public class EnemyController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if(_isDead) return;
+        
         _enemyCurrentHealth -= damage;
         if (_enemyCurrentHealth <= 0)
         {
-            _animator.SetTrigger("Die");
-            _agent.isStopped = true;
-            GetComponent<CapsuleCollider>().enabled = false;
-            Invoke(nameof(DestroyMe), _dieCooldown);
+            Die();
         }
         else
         {   
@@ -122,7 +124,17 @@ public class EnemyController : MonoBehaviour
             _lastHitTime = 0f;
         }
     }
-
+    private void Die()
+    {
+        if(_isDead) return;
+        _isDead = true;
+        _animator.SetTrigger("Die");
+        _animator.enabled = true;
+        _agent.isStopped = true;
+        _agent.enabled = false;
+        GetComponent<CapsuleCollider>().enabled = false;
+        Invoke(nameof(DestroyMe), _dieCooldown);
+    }
     private void DestroyMe()
     {
         Destroy(gameObject);

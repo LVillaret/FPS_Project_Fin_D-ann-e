@@ -40,7 +40,6 @@ public class DeathPanelManager : MonoBehaviour
     {
         Time.timeScale = 1;
         _isDead = false;
-        
         SceneManager.LoadScene("GlobalScene");
     }
 

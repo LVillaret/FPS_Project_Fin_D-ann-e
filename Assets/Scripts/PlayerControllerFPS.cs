@@ -48,6 +48,8 @@ public class PlayerControllerFPS : MonoBehaviour
     private AudioSource _audioSource;
 
     private Coroutine _overlayCoroutine;
+
+    private Color _originalColor;
     
     public DeathPanelManager _deathPanelManager;
     
@@ -58,6 +60,7 @@ public class PlayerControllerFPS : MonoBehaviour
 
     private void Start()
     {
+        _originalColor = _healthOverlay.color;
         _currentHealth  = _maxHealth;
         _deathPanel.SetActive(false);
         _audioSource = GetComponent<AudioSource>();
@@ -145,6 +148,8 @@ public class PlayerControllerFPS : MonoBehaviour
             time += Time.fixedDeltaTime;
             yield return new WaitForNextFrameUnit();
         }
+        
+        _healthOverlay.color = new Color (_healthOverlay.color.r, _healthOverlay.color.g, _healthOverlay.color.b, 0f);
     }
 
     public void Die()
