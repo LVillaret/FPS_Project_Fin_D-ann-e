@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerControllerFPS : MonoBehaviour
 {
-    [Header("References")] [SerializeField]
-    private Transform _cameraTransform;
+    [Header("References")] 
+    [SerializeField] private Transform _cameraTransform;
 
     [Header("Settings")] 
     [SerializeField] private float _speed = 5;
